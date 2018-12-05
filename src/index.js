@@ -1,5 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+import reducer from './reducers'
+import { logUser } from './actions';
 import { Router, Route, browserHistory } from 'react-router';
 import { firebaseApp } from './firebase';
 import './index.css';
@@ -9,23 +13,31 @@ import SignUp from './components/signup';
 import * as serviceWorker from './serviceWorker';
 
 
+const store = createStore(reducer);
+
 firebaseApp.auth().onAuthStateChanged(user =>{
     if(user) {
         console.log('User signed in or up', user);
+        const {email} = user;
+        store.dispatch(logUser(email));
+        browserHistory.push('/app')
     } else {
         console.log('user signed out or never signed in');
+        browserHistory.replace('/signin');
     }
 });
 
 ReactDOM.render(
-<Router path="/" history={browserHistory}>
-    <div>
-        <Route path="/app" component={App} />
-        <Route path="/signin" component={SignIn} />
-        <Route path="/signup" component={SignUp} />
-    </div>
+    <Provider store= {store}>
+        <Router path="/" history={browserHistory}>
+            <div>
+                <Route path="/app" component={App} />
+                <Route path="/signin" component={SignIn} />
+                <Route path="/signup" component={SignUp} />
+            </div>
     
-</Router>, 
+        </Router>
+    </Provider>, 
     document.getElementById('root'));
 
 // const routes = (

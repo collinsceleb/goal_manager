@@ -11,3 +11,4 @@ import * as firebase from 'firebase';
     messagingSenderId: "859015048806"
   };
  export const firebaseApp = firebase.initializeApp(config);
+ export const goalRef = firebase.database().ref('goals');
